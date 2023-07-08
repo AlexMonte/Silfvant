@@ -1,9 +1,9 @@
-pub struct Spell {
+pub struct SpellSource {
     pub name: String,
     pub spell_grid: SpellGrid,
 }
 
-impl Spell {
+impl SpellSource {
     pub fn new(name: String, spell_grid: SpellGrid) -> Spell {
         Spell { name, spell_grid }
     }

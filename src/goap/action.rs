@@ -5,10 +5,12 @@ use std::sync::Arc;
 
 use crate::goap::world_state::WorldState;
 
+use super::world_state::WorldStateType;
+
 pub struct ActionStackData<F, V>
 where
-    F: Eq + PartialEq + Hash + Clone + Reflect,
-    V: Eq + PartialEq + Clone + Reflect,
+    F: WorldStateType + Hash,
+    V: WorldStateType,
 {
     pub current_state: WorldState<F, V>,
     pub goal_state: WorldState<F, V>,
@@ -18,15 +20,15 @@ where
 
 pub trait Action<F, V>: Send + Sync
 where
-    F: Eq + PartialEq + Hash + Clone + Reflect,
-    V: Eq + PartialEq + Clone + Reflect,
+    F: WorldStateType + Hash,
+    V: WorldStateType,
 {
     // this should return current's action calculated parameter, will be added to the run method
     // userful for dynamic actions, for example a GoTo action can save some informations (wanted position)
     // while being chosen from the planner, we save this information and give it back when we run the method
     // most of actions would return a single item list, but more complex could return many items
 
-    fn get_gettings(&self, stack_data: ActionStackData<F, V>) -> LinkedList<WorldState<F, V>>;
+    fn get_settings(&self, stack_data: ActionStackData<F, V>) -> LinkedList<WorldState<F, V>>;
     fn run(
         &self,
         previous_action: Box<dyn Action<F, V>>,
@@ -70,8 +72,8 @@ where
 
 pub struct ActionState<F, V>
 where
-    F: Eq + PartialEq + Hash + Clone,
-    V: Eq + PartialEq + Clone,
+    F: WorldStateType + Hash,
+    V: WorldStateType,
 {
     pub action: Arc<dyn Action<F, V>>,
     pub settings: WorldState<F, V>,

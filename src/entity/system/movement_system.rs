@@ -1,6 +1,6 @@
 use std::ops::Add;
 
-use bevy::{prelude::*, transform};
+use bevy::prelude::*;
 
 use crate::entity::component::position::*;
 use crate::entity::component::velocity::Velocity;
@@ -22,42 +22,39 @@ fn update_component(d: &f32, r: &mut f32, c: &mut i32, time_delta_seconds: f32) 
     }
 }
 
-pub fn movement(
-    mut query: Query<(&mut Transform, &mut GridPosition, &mut GridRatio, &Velocity)>,
-    time: Res<Time>,
-) {
-    for (mut transform, mut grid_position, mut grid_ratio, velocity) in query.iter_mut() {
+pub fn movement(mut query: Query<(&mut Transform, &mut Grid, &Velocity)>, time: Res<Time>) {
+    for (mut transform, mut grid, velocity) in query.iter_mut() {
         update_component(
             &velocity.delta.x,
-            &mut grid_ratio.position.x,
-            &mut grid_position.position.x,
+            &mut grid.ratio.x,
+            &mut grid.position.x,
             time.delta_seconds(),
         );
         update_component(
             &velocity.delta.y,
-            &mut grid_ratio.position.y,
-            &mut grid_position.position.y,
+            &mut grid.ratio.y,
+            &mut grid.position.y,
             time.delta_seconds(),
         );
         update_component(
             &velocity.delta.z,
-            &mut grid_ratio.position.z,
-            &mut grid_position.position.z,
+            &mut grid.ratio.z,
+            &mut grid.position.z,
             time.delta_seconds(),
         );
 
-        transform.translation = grid_ratio.position.add(Vec3::new(
-            grid_position.position.x as f32,
-            grid_position.position.y as f32,
-            grid_position.position.z as f32,
+        transform.translation = grid.ratio.add(Vec3::new(
+            grid.position.x as f32,
+            grid.position.y as f32,
+            grid.position.z as f32,
         ));
     }
 }
 
-pub fn update_transforms(mut query: Query<(&mut Transform, &mut GridPosition, &mut GridRatio)>) {
-    for (transform, grid_position, grid_ratio) in query.iter_mut() {
-        transform.translation.x = grid_position.x as f32 * grid_ratio.x;
-        transform.translation.y = grid_position.y as f32 * grid_ratio.y;
-        transform.translation.z = grid_position.z as f32 * grid_ratio.z;
+pub fn update_transforms(mut query: Query<(&mut Transform, &mut Grid)>) {
+    for (mut transform, grid) in query.iter_mut() {
+        transform.translation.x = grid.position.x as f32 * grid.ratio.x;
+        transform.translation.y = grid.position.y as f32 * grid.ratio.y;
+        transform.translation.z = grid.position.z as f32 * grid.ratio.z;
     }
 }

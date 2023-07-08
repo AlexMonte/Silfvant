@@ -14,14 +14,14 @@ use ability::Ability;
 use bevy::prelude::*;
 use memory::Memory;
 use std::hash::Hash;
+
+use self::world_state::WorldStateType;
 // Method for triggering and executing the entity's Instincts
 pub fn FightOrFlightResponse<'ability, 'memory, F, V>(
     query: Query<(&'ability Ability<F, V>, &'memory Memory<F, V>)>,
 ) where
-    F: 'static + Eq + PartialEq + Hash + Clone + Send + Sync,
-    V: 'static + Eq + PartialEq + Clone + Send + Sync,
+    F: WorldStateType + Hash,
+    V: WorldStateType,
 {
-    for (ability, memory) in query.iter() {
-       
-    }
+    for (ability, memory) in query.iter() {}
 }

@@ -3,19 +3,21 @@ use bevy::prelude::*;
 use bevy::utils::hashbrown::hash_map::*;
 use std::hash::Hash;
 
+use super::world_state::WorldStateType;
+
 #[derive(Component)]
 pub struct Memory<F, V>
 where
-    F: Eq + PartialEq + Hash + Clone,
-    V: Eq + PartialEq + Clone,
+    F: WorldStateType + Hash,
+    V: WorldStateType,
 {
     pub world_state: WorldState<F, V>,
 }
 
 impl<F, V> Memory<F, V>
 where
-    F: Eq + PartialEq + Hash + Clone,
-    V: Eq + PartialEq + Clone,
+    F: WorldStateType + Hash,
+    V: WorldStateType,
 {
     pub fn new() -> Self {
         Memory::default()
@@ -52,8 +54,8 @@ where
 
 impl<F, V> Default for Memory<F, V>
 where
-    F: Eq + PartialEq + Hash + Clone,
-    V: Eq + PartialEq + Clone,
+    F: WorldStateType + Hash,
+    V: WorldStateType,
 {
     fn default() -> Self {
         Self {
@@ -65,16 +67,16 @@ where
 #[derive(Resource)]
 pub struct WorldMemory<F, V>
 where
-    F: Eq + PartialEq + Hash + Clone + Send + Sync,
-    V: Eq + PartialEq + Clone + Send + Sync,
+    F: WorldStateType + Hash,
+    V: WorldStateType,
 {
     pub world_state: WorldState<F, V>,
 }
 
 impl<F, V> WorldMemory<F, V>
 where
-    F: Eq + PartialEq + Hash + Clone + Send + Sync,
-    V: Eq + PartialEq + Clone + Send + Sync,
+    F: WorldStateType + Hash,
+    V: WorldStateType,
 {
     pub fn new() -> Self {
         WorldMemory::default()
@@ -111,8 +113,8 @@ where
 
 impl<F, V> Default for WorldMemory<F, V>
 where
-    F: Eq + PartialEq + Hash + Clone + Send + Sync,
-    V: Eq + PartialEq + Clone + Send + Sync,
+    F: WorldStateType + Hash,
+    V: WorldStateType,
 {
     fn default() -> Self {
         Self {

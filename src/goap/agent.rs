@@ -7,6 +7,8 @@ use crate::goap::goal::Goal;
 
 use crate::entity::component::position::*;
 
+use super::world_state::WorldStateType;
+
 pub enum AgentState {
     Idle,
     Running,
@@ -17,8 +19,8 @@ pub enum AgentState {
 #[derive(Default)]
 pub struct AgentData<F, V>
 where
-    F: Eq + PartialEq + Hash + Clone,
-    V: Eq + PartialEq + Clone,
+    F: WorldStateType + Hash,
+    V: WorldStateType,
 {
     goal_set: Vec<Goal<F, V>>,
     action_set: Vec<Arc<dyn Action<F, V>>>,
@@ -28,14 +30,18 @@ where
 
 pub struct AgentBuilder<F, V>
 where
-    F: Eq + PartialEq + Hash + Clone,
-    V: Eq + PartialEq + Clone,
+    F: WorldStateType + Hash,
+    V: WorldStateType,
 {
     goal_set: Vec<Goal<F, V>>,
     action_set: Vec<Arc<dyn Action<F, V>>>,
 }
 
-impl<F: Eq + PartialEq + Hash + Clone, V: Eq + PartialEq + Clone> AgentBuilder<F, V> {
+impl<F, V> AgentBuilder<F, V>
+where
+    F: WorldStateType + Hash,
+    V: WorldStateType,
+{
     pub fn new() -> Self {
         Self {
             goal_set: Vec::new(),
@@ -44,6 +50,6 @@ impl<F: Eq + PartialEq + Hash + Clone, V: Eq + PartialEq + Clone> AgentBuilder<F
     }
 
     pub fn build(self, commands: &mut Commands) -> Entity {
-        commands.spawn(CPosition::new(0, 0, 0)).id()
+        commands.spawn(Grid::new(0, 0, 0)).id()
     }
 }

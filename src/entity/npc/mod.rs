@@ -26,8 +26,7 @@ fn spawn_npc(
                 ..default()
             },
         ))
-        .insert(CPosition::new(0, 0, 0))
-        .insert(RPosition::new(0.0, 0.0, 0.0))
+        .insert(Grid::new(0, 0, 0))
         .insert(Velocity::new(0.0, 0.0, 0.0));
 }
 impl Plugin for NpcPlugin {

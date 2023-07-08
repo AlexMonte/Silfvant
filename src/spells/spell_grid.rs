@@ -2,7 +2,7 @@ const GRID_SIZE: usize = 9;
 const GRID_CENTER: usize = (GRID_SIZE - 1) / 2;
 
 pub struct SpellGrid {
-    pub spell: Spell,
+    pub spell_source: SpellSource,
     pub grid_data: [[Option<SpellPiece>; GRID_SIZE]; GRID_SIZE],
 
     empty: bool,
@@ -14,9 +14,9 @@ pub struct SpellGrid {
 }
 
 impl SpellGrid {
-    fn new(spell: Spell) -> SpellGrid {
+    fn new(spell_source: SpellSource) -> SpellGrid {
         let mut grid_data = [[None; GRID_SIZE]; GRID_SIZE];
-        for piece in spell.pieces.iter() {
+        for piece in spell_source.pieces.iter() {
             grid_data[piece.x][piece.y] = Some(*piece);
         }
         SpellGrid { spell, grid_data }

@@ -1,48 +1,57 @@
-use bevy::log;
 use bevy::prelude::Reflect;
-use std::collections::hash_map::DefaultHasher;
+use bevy::reflect::FromReflect;
 use std::hash::Hash;
 use std::ops::Add;
 
 use bevy::utils::hashbrown::hash_map::*;
+pub trait WorldStateType: Eq + PartialEq + Clone + Reflect + Send + Sync {}
 
-#[derive(Eq, Hash, PartialEq, Clone, Reflect, Debug)]
+#[derive(Eq, Hash, PartialEq, Clone, Reflect, FromReflect, Debug)]
 pub enum WorldFact {
     None,
     Safe,
     CollectResource,
     Enemy,
 }
-#[derive(Eq, Hash, PartialEq, Clone, Reflect, Debug)]
+impl WorldStateType for WorldFact {}
+#[derive(Eq, Hash, PartialEq, Clone, Reflect, FromReflect, Debug)]
 pub enum WorldValue {
     None,
     Is(bool),
     Entity(u32),
 }
-#[derive(Debug, Eq, PartialEq, Hash, Clone)]
-pub struct WorldState<F: Eq + PartialEq + Clone, V: Eq + PartialEq + Clone>(HashMap<F, V>);
+impl WorldStateType for WorldValue {}
+
+#[derive(Eq, PartialEq, Clone, Reflect, Debug)]
+pub struct WorldState<F, V>
+where
+    F: WorldStateType + Hash,
+    V: WorldStateType,
+{
+    pub state: HashMap<F, V>,
+}
 
 impl<F, V> WorldState<F, V>
 where
-    F: Eq + PartialEq + Hash + Clone,
-    V: Eq + PartialEq + Clone,
+    F: WorldStateType + Hash,
+    V: WorldStateType,
     HashMap<F, V>: Hash,
 {
     pub fn new(key: F, value: V) -> Self {
-        let mut world_state = HashMap::new();
-        world_state.insert(key, value);
-        Self(world_state)
+        let mut state = HashMap::new();
+        state.insert(key, value);
+        WorldState { state }
     }
 
     pub fn count(&self) -> usize {
-        self.0.len()
+        self.state.len()
     }
 
     pub fn has_conflicting_facts(&self, other: WorldState<F, V>) -> bool {
-        for (fact, value) in self.0.iter() {
+        for (fact, value) in self.state.iter() {
             if let Some(other_value) = other.try_to_get(fact) {
                 if value != other_value {
-                    println!("Conflict: {0} with {1} and {2}", fact, value, other_value);
+                    //log!("Conflict: {0} with {1} and {2}", fact, value, other_value);
                     return false;
                 }
             }
@@ -66,7 +75,7 @@ where
                 if value != other_value && predicate.is_none()
                     || predicate.as_ref().unwrap()(fact.clone(), value.clone())
                 {
-                    println!("Conflict: {0} with {1} and {2}", fact, value, other_value);
+                    //log!("Conflict: {0} with {1} and {2}", fact, value, other_value);
                     if let Some(difference) = difference.as_mut() {
                         difference.set(fact.clone(), value.clone());
                         count += 1;
@@ -79,70 +88,70 @@ where
 
     pub fn add_from_state(&mut self, other: &Self) {
         for (fact, value) in other.iter() {
-            self.0.insert(fact.clone(), value.clone());
+            self.state.insert(fact.clone(), value.clone());
         }
     }
 
     pub fn get(&self, fact: &F) -> &V {
-        self.0.get(fact).unwrap()
+        self.state.get(fact).unwrap()
     }
     pub fn get_mut(&mut self, fact: &F) -> &mut V {
-        self.0.get_mut(fact).unwrap()
+        self.state.get_mut(fact).unwrap()
     }
     pub fn try_to_get(&self, fact: &F) -> Option<&V> {
-        self.0.get(fact)
+        self.state.get(fact)
     }
 
     pub fn try_to_get_mut(&mut self, fact: &F) -> Option<&mut V> {
-        self.0.get_mut(fact)
+        self.state.get_mut(fact)
     }
     pub fn set(&mut self, fact: F, value: V) {
-        self.0.insert(fact, value);
+        self.state.insert(fact, value);
     }
 
     pub fn remove(&mut self, fact: &F) -> Option<V> {
-        self.0.remove(fact)
+        self.state.remove(fact)
     }
 
     pub fn has_key(&self, fact: &F) -> bool {
-        self.0.contains_key(fact)
+        self.state.contains_key(fact)
     }
 
     pub fn clear(&mut self) {
-        self.0.clear();
+        self.state.clear();
     }
     pub fn iter(&self) -> Iter<F, V> {
-        self.0.iter()
+        self.state.iter()
     }
     pub fn iter_mut(&mut self) -> IterMut<F, V> {
-        self.0.iter_mut()
+        self.state.iter_mut()
     }
 }
 
 impl<F, V> Default for WorldState<F, V>
 where
-    F: Eq + PartialEq + Hash + Clone,
-    V: Eq + PartialEq + Clone,
+    F: WorldStateType + Hash,
+    V: WorldStateType,
 {
     fn default() -> Self {
         Self {
-            0: HashMap::default(),
+            state: HashMap::default(),
         }
     }
 }
 
 impl<F, V> Add for WorldState<F, V>
 where
-    F: Eq + PartialEq + Hash + Clone,
-    V: Eq + PartialEq + Clone,
+    F: WorldStateType + Hash,
+    V: WorldStateType,
 {
     type Output = Self;
 
     fn add(self, other: WorldState<F, V>) -> WorldState<F, V> {
         let mut result = self;
-        for (fact, value) in other.iter() {
-            result.set(fact.clone(), value.clone());
+        for (fact, value) in other.state.iter() {
+            result.state.set(fact.clone(), value.clone());
         }
-        Self(result.0)
+        result
     }
 }

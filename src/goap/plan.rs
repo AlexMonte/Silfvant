@@ -2,17 +2,23 @@ use crate::goap::action::ActionState;
 use std::collections::vec_deque::{Iter, IterMut, VecDeque};
 use std::hash::Hash;
 
-pub struct Plan<F: Eq + PartialEq + Hash + Clone, V: Eq + PartialEq + Clone>(
-    VecDeque<ActionState<F, V>>,
-);
+use super::world_state::WorldStateType;
+
+pub struct Plan<F, V>
+where
+    F: WorldStateType + Hash,
+    V: WorldStateType,
+{
+    actions: VecDeque<ActionState<F, V>>,
+}
 
 impl<F, V> Plan<F, V>
 where
-    F: Eq + PartialEq + Hash + Clone,
-    V: Eq + PartialEq + Clone,
+    F: WorldStateType + Hash,
+    V: WorldStateType,
 {
     pub fn new() -> Self {
-        Self(VecDeque::new())
+        Self.actions = VecDeque::new()
     }
 
     pub fn push(&mut self, action_state: ActionState<F, V>) {

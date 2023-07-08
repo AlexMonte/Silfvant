@@ -5,6 +5,8 @@ use std::sync::Arc;
 use crate::goap::action::Action;
 use crate::goap::memory::Memory;
 
+use super::world_state::WorldStateType;
+
 #[derive(Component, Clone)]
 pub struct Ability<F, V> {
     action_set: Vec<Arc<dyn Action<F, V>>>,
@@ -13,8 +15,8 @@ pub struct Ability<F, V> {
 
 impl<F, V> Ability<F, V>
 where
-    F: Eq + PartialEq + Hash + Clone + Reflect,
-    V: Eq + PartialEq + Clone + Reflect,
+    F: WorldStateType + Hash,
+    V: WorldStateType,
 {
     pub fn new() -> Self {
         Self {
