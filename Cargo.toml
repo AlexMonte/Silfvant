@@ -1,0 +1,32 @@
+[package]
+name = "silfvaria"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bevy = {version = "0.10" }
+bevy-inspector-egui = "*"
+bevy_editor_pls = "0.4.0"
+egui = "*"
+competitive-programming-rs = "41.0.0"
+mcts = "0.3.0"
+pixelate_mesh = "0.1.0"
+
+[dependencies.uuid]
+version = "1.4.0"
+features = [
+    "v4",                # Lets you generate random UUIDs
+    "fast-rng",          # Use a faster (but still sufficiently random) RNG
+    "macro-diagnostics", # Enable better diagnostics for compile-time UUIDs
+]
+
+
+# Enable a small amount of optimization in debug mode
+[profile.dev]
+opt-level = 1
+
+# Enable high optimizations for dependencies (incl. Bevy), but not for our code:
+[profile.dev.package."*"]
+opt-level = 3
