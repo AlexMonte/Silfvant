@@ -18,11 +18,6 @@ pub struct SpellContext {
     pub focal_point: Entity,
 
     /**
-     * The compiled spell to execute.
-     */
-    pub compiled_spell: CompiledSpell,
-
-    /**
      * The loopcast index of this context. This is always 0 when the spell is cast as not a
      * loopcast. Increments every time for each loopcast iteration.
      */

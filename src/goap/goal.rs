@@ -1,58 +1,58 @@
+use super::world_state::{WorldState, WorldStateType};
 use std::hash::Hash;
 
-use super::world_state::{WorldState, WorldStateType};
-
-pub trait Goal<F, V>: Send + Sync + 'static
-where
-    F: WorldStateType + Hash,
-    V: WorldStateType,
-{
-    fn get_priority(&self, world_state: &WorldState<F, V>) -> f32;
-    fn get_error_delay(&self) -> f32;
-    fn get_desired_facts(&self) -> &WorldState<F, V>;
-    fn get_name(&self) -> &'static str;
-    fn is_goal_possible(&self, world_state: &WorldState<F, V>) -> bool;
-    fn run(
-        &self,
-        world_state: &mut WorldState<F, V>,
-        callback: &mut dyn FnMut(&mut WorldState<F, V>),
-    ) -> bool;
-    
+pub trait Goal: Send + Sync + 'static {
+    fn get_priority(&self, world_state: &WorldState) -> f32;
+    fn get_desired_state(&self) -> &WorldState;
+    fn is_goal_possible(&self, world_state: &WorldState) -> bool;
 }
 
 //precalculations for the goal should be implemented as a system
-
+macro_rules! define_goal {
+    ($name:ident, $desired_facts:expr) => {
+        #[derive(Debug, Eq, PartialEq, Clone)]
+        pub struct $name
+        where
+            String: WorldStateType + Hash,
+            WorldFact: WorldStateType,
+        {
+            // represents the name of the goal. This is used for debugging purposes
+            pub name: &'static str,
+            pub desired_facts: WorldState = $desired_facts,
+        };
+    }
+}
 macro_rules! define_goal {
     ($name:ident, $desired_facts:expr, $priority_fn:expr, $name_fn:expr) => {
         #[derive(Debug, Eq, PartialEq, Clone)]
-        struct $name<F, V>
+        struct $name
         where
-            F: WorldStateType + Hash,
-            V: WorldStateType,
+            String: WorldStateType + Hash,
+            WorldFact: WorldStateType,
         {
             // represents the name of the goal. This is used for debugging purposes
             pub name: &'static str,
 
-            pub desired_facts: WorldState<F, V>,
+            pub desired_facts: WorldState,
         };
 
-        impl<F, V> Goal<F, V> for $name
+        impl Goal for $name
         where
-            F: WorldStateType + Hash,
-            V: WorldStateType,
+            String: WorldStateType + Hash,
+            WorldFact: WorldStateType,
         {
-            fn evaluate_goal<F, V>(world_state: &WorldState<F, V>) -> f32
+            fn evaluate_goal(world_state: &WorldState) -> f32
             where
-                F: WorldStateType + Hash,
-                V: WorldStateType,
+                String: WorldStateType + Hash,
+                WorldFact: WorldStateType,
             {
                 $priority_fn(world_state)
             }
 
-            fn get_desired_facts<F, V>() -> WorldState<F, V>
+            fn get_desired_facts() -> WorldState
             where
-                F: WorldStateType + Hash,
-                V: WorldStateType,
+                String: WorldStateType + Hash,
+                WorldFact: WorldStateType,
             {
                 $desired_facts
             }

@@ -20,6 +20,18 @@
         ".\\Cargo.toml",
         ".\\Cargo.toml",
         ".\\Cargo.toml",
+        ".\\Cargo.toml",
+        ".\\Cargo.toml",
+        ".\\Cargo.toml",
+        ".\\Cargo.toml",
         ".\\Cargo.toml"
+    ],
+    "cSpell.words": [
+        "AABB",
+        "egui",
+        "flycam",
+        "goap",
+        "hashbrown",
+        "mcts"
     ]
 }

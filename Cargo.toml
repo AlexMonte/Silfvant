@@ -6,13 +6,14 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-bevy = {version = "0.10" }
+bevy = "0.11" 
 bevy-inspector-egui = "*"
 bevy_editor_pls = "0.4.0"
 egui = "*"
 competitive-programming-rs = "41.0.0"
 mcts = "0.3.0"
 pixelate_mesh = "0.1.0"
+bevy_flycam = { git = "https://github.com/sburris0/bevy_flycam" }
 
 [dependencies.uuid]
 version = "1.4.0"

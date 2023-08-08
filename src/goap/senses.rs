@@ -4,14 +4,10 @@ use std::hash::Hash;
 
 use super::world_state::*;
 
-pub trait Senses<F, V>
-where
-    F: WorldStateType + Hash,
-    V: WorldStateType,
-{
-    fn init(&self, men: &mut Memory<F, V>);
+pub trait Senses {
+    fn init(&self, men: &mut Memory);
 
-    fn update(&self, mem: &mut Memory<F, V>);
+    fn update(&self, mem: &mut Memory);
 }
 
 pub fn initialized_senses<Sense: Senses<WorldFact, WorldValue> + Component>(

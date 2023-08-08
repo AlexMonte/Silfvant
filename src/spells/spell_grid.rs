@@ -2,10 +2,15 @@ const GRID_SIZE: usize = 9;
 const GRID_CENTER: usize = (GRID_SIZE - 1) / 2;
 
 pub struct SpellGrid {
-    pub spell_source: SpellSource,
+    pub spell_context: SpellContext,
     pub grid_data: [[Option<SpellPiece>; GRID_SIZE]; GRID_SIZE],
+    
+    intial_piece: Option<SpellPiece>,
 
     empty: bool,
+
+    caster: Entity,
+    target: Option<Entity>,
 
     left: usize,
     right: usize,

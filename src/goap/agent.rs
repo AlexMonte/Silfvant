@@ -17,31 +17,19 @@ pub enum AgentState {
 }
 
 #[derive(Default)]
-pub struct AgentData<F, V>
-where
-    F: WorldStateType + Hash,
-    V: WorldStateType,
-{
-    goal_set: Vec<Goal<F, V>>,
-    action_set: Vec<Arc<dyn Action<F, V>>>,
-    current_goal: Option<Goal<F, V>>,
-    current_action: Option<Arc<dyn Action<F, V>>>,
+pub struct AgentData<'a, String, WorldFact> {
+    goal_set: Vec<Box<dyn Goal>>,
+    action_set: Vec<Arc<dyn Action>>,
+    current_goal: Option<Box<&'a dyn Goal>>,
+    current_action: Option<Arc<dyn Action>>,
 }
 
-pub struct AgentBuilder<F, V>
-where
-    F: WorldStateType + Hash,
-    V: WorldStateType,
-{
-    goal_set: Vec<Goal<F, V>>,
-    action_set: Vec<Arc<dyn Action<F, V>>>,
+pub struct AgentBuilder {
+    goal_set: Vec<Box<dyn Goal>>,
+    action_set: Vec<Arc<dyn Action>>,
 }
 
-impl<F, V> AgentBuilder<F, V>
-where
-    F: WorldStateType + Hash,
-    V: WorldStateType,
-{
+impl AgentBuilder {
     pub fn new() -> Self {
         Self {
             goal_set: Vec::new(),

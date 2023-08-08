@@ -3,11 +3,11 @@ use bevy::prelude::*;
 /// A cache of `WorldState` instances that can be recycled to reduce memory allocation.
 
 #[derive(Resource, Eq, PartialEq, Clone)]
-pub struct CacheState<F, V> {
-    cache: Vec<WorldState<F, V>>,
+pub struct CacheState {
+    cache: Vec<WorldState>,
 }
 
-impl<F, V> CacheState<F, V> {
+impl CacheState {
     pub fn prepare_cache(&mut self, count: usize) {
         self.cache.resize(count, WorldState::new());
     }
