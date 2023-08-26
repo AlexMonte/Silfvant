@@ -24,13 +24,19 @@
         ".\\Cargo.toml",
         ".\\Cargo.toml",
         ".\\Cargo.toml",
+        ".\\Cargo.toml",
+        ".\\Cargo.toml",
+        ".\\Cargo.toml",
         ".\\Cargo.toml"
     ],
     "cSpell.words": [
         "AABB",
         "egui",
         "flycam",
+        "Gamebase",
+        "gameplay",
         "goap",
+        "gridblocks",
         "hashbrown",
         "mcts"
     ]
